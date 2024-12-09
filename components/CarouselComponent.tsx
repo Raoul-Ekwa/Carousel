@@ -1,73 +1,112 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, Dimensions, Image, StyleSheet, ScrollView } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
-import photoData from '../datas/photos.json';
 
+const { width, height } = Dimensions.get('window');
 
-const data = photoData;
+// Données JSON des produits
+const products = [
+  {
+    "id": 0,
+    "name": "Kateryna Tsurik",
+    "images": [
+        "https://images.pexels.com/photos/4598665/pexels-photo-4598665.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+        "https://images.pexels.com/photos/3131981/pexels-photo-3131981.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+        "https://images.pexels.com/photos/3131981/pexels-photo-3131981.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+        "https://images.pexels.com/photos/2405648/pexels-photo-2405648.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+        "https://images.pexels.com/photos/1484516/pexels-photo-1484516.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+        "https://images.pexels.com/photos/11701120/pexels-photo-11701120.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+        "https://images.pexels.com/photos/3467946/pexels-photo-3467946.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+        "https://images.pexels.com/photos/3450331/pexels-photo-3450331.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+        "https://images.pexels.com/photos/4291121/pexels-photo-4291121.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+        "https://images.pexels.com/photos/6728528/pexels-photo-6728528.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+        "https://images.pexels.com/photos/8166624/pexels-photo-8166624.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
 
-const { width } = Dimensions.get('window');
+    ]    
+    ,
+    "prix": 124350,
+    "modele": "Mode xdatel"
+}
+];
 
-const CarouselComponent = () => {
-  const renderItem = ({ item }: { item: string }) => {
-    if (!item) return null; // Évite des erreurs si `item` est indéfini
-    return (
-      <View style={styles.card}>
-        <Image source={{ uri: item }} style={styles.image} />
-      </View>
-    );
-  };
+const ProductCarousel = ({ product }) => {
   return (
-    <View style={styles.container}>
-      {data.map((item) => (
-        <View key={item.id} style={styles.section}>
-          <Text style={styles.title}>{item.name}</Text>
-          <Carousel
-            data={item.images}
-            renderItem={renderItem}
-            sliderWidth={width}
-            itemWidth={width * 0.8}
-            loop={true}
-          />
-          <Text style={styles.details}>
-            Modèle : {item.modele} | Prix : {item.prix} FCFA
-          </Text>
-        </View>
-      ))}
+    <View style={styles.productContainer}>
+      {/* Correction de l'accès aux données du produit */}
+      <Text style={styles.productName}>{product.name}</Text>
+      
+      <Carousel
+        data={product.images}
+        renderItem={({ item }) => (
+          <View style={styles.carouselItem}>
+            <Image source={{ uri: item }} style={styles.carouselImage} />
+          </View>
+        )}
+        sliderWidth={width}
+        itemWidth={width - 80} // Ajustez la largeur de l'élément
+        loop={true} // Pour permettre un défilement infini
+      />
+      
+      <Text style={styles.price}>Prix: {product.prix}€</Text>
+      <Text style={styles.model}>Modèle: {product.modele}</Text>
     </View>
+  );
+};
+
+const App = () => {
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      {/* Correction du nom de variable dans la boucle map */}
+      {products.map((product) => (
+        <ProductCarousel key={product.id} product={product} />
+      ))}
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#f9f9f9',
-    padding: 10,
+    flexGrow: 1,
+    paddingTop: 20,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
   },
-  section: {
-    marginBottom: 20,
+  productContainer: {
+    marginBottom: 30,
+    alignItems: 'center',
   },
-  title: {
-    fontSize: 18,
+  productName: {
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
   },
-  card: {
+  carouselItem: {
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#fff',
     borderRadius: 10,
-    overflow: 'hidden',
-    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+    marginVertical: 10,
   },
-  image: {
+  carouselImage: {
     width: '100%',
-    height: 200,
-    resizeMode: 'cover',
+    height: 250, // Vous pouvez ajuster la hauteur en fonction de votre design
+    borderRadius: 10,
   },
-  details: {
+  price: {
+    fontSize: 18,
+    color: '#333',
     marginTop: 10,
-    fontSize: 14,
-    color: '#555',
+  },
+  model: {
+    fontSize: 16,
+    color: '#777',
+    marginTop: 5,
   },
 });
 
-export default CarouselComponent;
+export default App;
